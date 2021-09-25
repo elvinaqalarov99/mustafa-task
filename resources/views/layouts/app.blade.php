@@ -18,6 +18,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
+    @yield('style')
 </head>
 <body>
     <div id="app">
@@ -81,5 +84,52 @@
             </div>
         </main>
     </div>
+    <script src="{{ mix('js/app.js') }}"></script>
+    <!-- JAVASCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+    <script>
+        function deleteConfirmation(model, id) {
+            swal({
+                title: "Delete?",
+                text: "Please ensure and then confirm!",
+                type: "warning",
+                showCancelButton: 1,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: !0
+            }).then(function(e) {
+                if (e.value === true) {
+                    const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                    $.ajax({
+                        type: 'DELETE',
+                        url: `/${model}/${id}`,
+                        data: {
+                            _token: CSRF_TOKEN
+                        },
+                        dataType: 'JSON',
+                        success: function(results) {
+                            if (results.code === 200) {
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                                swal("Done!", "", "success");
+                            } else {
+                                swal("Error!", "", "error");
+                            }
+                        },
+                        error: function(err) {
+                            swal("Error!", "There was an error, please try again later", "error");
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }   
+            }, function(dismiss) {
+                return false;
+            })
+        }
+    </script>
+    @yield('script')
 </body>
 </html>

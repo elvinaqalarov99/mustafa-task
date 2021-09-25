@@ -9,5 +9,9 @@ class Post extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['title', 'content', 'image'];
+    protected $fillable = ['title', 'content', 'image', 'state'];
+
+    protected $casts = [
+        'state' => 'boolean'
+    ];
 }

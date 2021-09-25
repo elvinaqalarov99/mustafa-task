@@ -29,10 +29,11 @@
                 <td>
                     <a href="{{ route('posts.show', $post) }}" class="btn btn-outline-success">Show</a>
                     <a href="{{ route('posts.edit', $post) }}" class="btn btn-outline-primary">Edit</a>
-                    <form class="d-inline" action="{{ route('posts.destroy', $post) }}" method="POST">
+                    <button class="btn btn-outline-danger" onclick="deleteConfirmation('posts', {{ $post->getAttribute('id') }})">DELETE</button>
+                    {{-- <form class="d-inline" action="{{ route('posts.destroy', $post) }}" method="POST">
                         @csrf @method("DELETE")
-                        <button class="btn btn-outline-danger">DELETE</button>
-                    </form>
+                        <button class="btn btn-outline-danger" >DELETE</button>
+                    </form> --}}
                 </td>
             </tr>
         @endforeach

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -25,7 +26,17 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
-        Post::create($request->validated());
+        $validated = $request->validated();
+
+        $validated['state'] = $request->has('state');
+
+        $image_path = 'posts/' . time() . '.' . $request->file('image')->extension();
+
+        $request->file('image')->storeAs('public', $image_path);
+
+        $validated['image'] = $image_path;   
+
+        Post::create($validated);
 
         return redirect()->route('posts.index')->with('message', 'Created successfully!');
     }
@@ -50,7 +61,23 @@ class PostController extends Controller
 
     public function update(PostRequest $request, Post $post)
     {
-        $post->update($request->validated());
+        $validated = $request->validated();
+
+        $validated['state'] = $request->has('state');
+
+        if($request->hasFile('image')){
+            if(Storage::disk('public')->exists($post->getAttribute('image'))){
+                Storage::disk('public')->delete($post->getAttribute('image'));
+            }
+
+            $image_path = 'posts/' . time() . '.' . $request->file('image')->extension();
+
+            $request->file('image')->storeAs('public', $image_path);
+
+            $validated['image'] = $image_path;   
+        }
+
+        $post->update($validated);
         
         return redirect()->route('posts.index')->with('message', "Post {$post->getAttribute('title')} updated successfully!");
     }
@@ -58,9 +85,9 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         if($post->delete()){
-            return redirect()->route('posts.index')->with('message', "Post deleted successfully!");
+            return response()->json(['code' => 200]);
         }else{
-            return redirect()->route('posts.index')->with('message', "Error occured while deleting post!");
+            return response()->json(['code' => 400]);
         }
     }
 }

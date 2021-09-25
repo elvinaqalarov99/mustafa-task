@@ -23,9 +23,13 @@ class PostRequest extends FormRequest
      */
     public function rules()
     {
+        $image = $this->isMethod('POST') ? 'required' : 'nullable';
+        
         return [
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
+            'image' => "$image|mimes:png,jpg,jpeg,gif|max:1024",
+            'state' => 'nullable'
         ];
     }
 }
