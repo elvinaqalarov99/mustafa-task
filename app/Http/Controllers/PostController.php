@@ -34,7 +34,7 @@ class PostController extends Controller
 
         $request->file('image')->storeAs('public', $image_path);
 
-        $validated['image'] = $image_path;   
+        $validated['image'] = $image_path;
 
         Post::create($validated);
 
@@ -74,11 +74,11 @@ class PostController extends Controller
 
             $request->file('image')->storeAs('public', $image_path);
 
-            $validated['image'] = $image_path;   
+            $validated['image'] = $image_path;
         }
 
         $post->update($validated);
-        
+
         return redirect()->route('posts.index')->with('message', "Post {$post->getAttribute('title')} updated successfully!");
     }
 
