@@ -6,13 +6,14 @@
         {{ session()->get('message') }}
   </div>
 @endif
-@if (auth()->check())
-    <div class="row mb-3 float-right">
-        <div class="col-12">
-            <a href="{{ route('posts.create') }}" class="btn btn-outline-success">Add</a>
+    @can('create', App\Models\Post::class)
+        <div class="row mb-3 float-right">
+            <div class="col-12">
+                <a href="{{ route('posts.create') }}" class="btn btn-outline-success">Add</a>
+            </div>
         </div>
-    </div>
-@endif
+    @endcan
+
 <table class="table">
     <thead>
       <tr>
@@ -32,9 +33,15 @@
                     @guest
                         <a href="{{ route('posts.show', $post) }}" class="btn btn-outline-success">Show</a>
                     @else
-                        <a href="{{ route('posts.show', $post) }}" class="btn btn-outline-success">Show</a>
-                        <a href="{{ route('posts.edit', $post) }}" class="btn btn-outline-primary">Edit</a>
-                        <button class="btn btn-outline-danger" onclick="deleteConfirmation('posts', {{ $post->getAttribute('id') }})">DELETE</button>
+                        @can('view', $post)
+                            <a href="{{ route('posts.show', $post) }}" class="btn btn-outline-success">Show</a>
+                        @endcan
+                        @can('update', $post)
+                             <a href="{{ route('posts.edit', $post) }}" class="btn btn-outline-primary">Edit</a>
+                        @endcan
+                        @can('delete', $post)
+                            <button class="btn btn-outline-danger" onclick="deleteConfirmation('posts', {{ $post->getAttribute('id') }})">DELETE</button>
+                        @endcan
                     @endguest
                 </td>
             </tr>
