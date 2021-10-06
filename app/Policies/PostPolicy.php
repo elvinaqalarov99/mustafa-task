@@ -30,14 +30,9 @@ class PostPolicy
         return false;
     }
 
-    public function view(User $user): bool
+    public function view(User $user, Post $post): bool
     {
-        foreach ($user->roles as $role){
-            if($role->permissions->contains('name', __FUNCTION__ . '-' . $this->class)){
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     public function create(User $user): bool
@@ -50,22 +45,18 @@ class PostPolicy
         return false;
     }
 
-    public function update(User $user): bool
+    public function update(User $user, Post $post): bool
     {
-        foreach ($user->roles as $role){
-            if($role->permissions->contains('name', __FUNCTION__ . '-' . $this->class)){
-                return true;
-            }
+        if ($post->getAttribute('user_id') == $user->getAttribute('id')){
+            return true;
         }
         return false;
     }
 
-    public function delete(User $user): bool
+    public function delete(User $user,  Post $post): bool
     {
-        foreach ($user->roles as $role){
-            if($role->permissions->contains('name', __FUNCTION__ . '-' . $this->class)){
-                return true;
-            }
+        if ($post->getAttribute('user_id') == $user->getAttribute('id')){
+            return true;
         }
         return false;
     }

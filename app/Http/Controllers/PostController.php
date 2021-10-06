@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,11 +31,13 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(PostRequest $request)
+    public function store(PostRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         $validated['state'] = $request->has('state');
+
+        $validated['user_id'] = auth()->id();
 
         $image_path = 'posts/' . time() . '.' . $request->file('image')->extension();
 
@@ -65,7 +68,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function update(PostRequest $request, Post $post)
+    public function update(PostRequest $request, Post $post): RedirectResponse
     {
         $validated = $request->validated();
 
